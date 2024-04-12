@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo</title>
+    <!-- Estilos de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos adicionales */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .btn-danger {
+            border-radius: 5px;
+            width: 100%;
+        }
+        .btn-danger:hover {
+            background-color: #dc3545;
+        }
+        .table {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th,
+        .table td {
+            border: none;
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: #343a40;
+            color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+        .table tbody tr:nth-of-type(even) {
+            background-color: #f8f9fa;
+        }
+        .table-bordered th,
+        .table-bordered td {
+            border: none;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 5px;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Dashboard Administrativo</h1>
+        <a href="/logout" class="btn btn-danger mb-4">Logout</a>
+
+        <!-- Botón para volver al Home -->
+        <a href="/home" class="btn btn-primary mb-4">Volver al Home</a>
+
+        <!-- Contadores -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cantidad de Usuarios</h5>
+                        <p class="card-text">{{ total_users }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Usuarios Bloqueados por Intentos Fallidos</h5>
+                        <p class="card-text">{{ users_blocked_failed_attempts }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Usuarios Bloqueados por Administradores</h5>
+                        <p class="card-text">{{ users_blocked_by_admin }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Usuarios -->
+        <!-- Tabla de Usuarios -->
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Usuario</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{% if user.is_blocked %} Bloqueado {% else %} Activo {% endif %}</td>
+            <td>
+                {% if user.is_blocked %}
+                    {% if user.failed_login_attempts %}  <!-- Verificar si hay intentos fallidos -->
+                        <form action="{{ url_for('unblock_failed_attempts', user_id=user.id) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm btn-success">Desbloquear por intentos fallidos</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    {% if not user.is_admin %}
+                        <form action="{{ url_for('block_user', user_id=user.id) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-sm {% if user.is_blocked %} btn-success {% else %} btn-danger {% endif %}">
+                                {% if user.is_blocked %} Desbloquear {% else %} Bloquear {% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+</body>
+</html>

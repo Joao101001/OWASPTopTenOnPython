@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <!-- Estilos de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <style>
+        /* Estilos adicionales */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .owasp-block {
+            border: 1px solid #d6d6d6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .owasp-title {
+            margin-bottom: 10px;
+            font-size: 22px;
+            color: #343a40;
+        }
+        .owasp-desc {
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+        .owasp-check {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #28a745;
+        }
+        .btn {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Bienvenido a la página de inicio</h1>
+
+        <!-- Bloque de Implementación de OWASP: A1 - Inyección SQL -->
+        <div class="owasp-block">
+            <h2 class="owasp-title">A1: Inyección SQL</h2>
+            <p class="owasp-desc">La aplicación no es vulnerable a inyección SQL.</p>
+            <p class="owasp-desc"><i class="owasp-check fas fa-check-circle"></i> Implementación segura.</p>
+            <pre><code>
+# Implementación de OWASP A1 - Inyección SQL
+from flask_sqlalchemy import SQLAlchemy
+
+# Definición del modelo User en SQLAlchemy
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(100), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    is_blocked = db.Column(db.Boolean, default=False)
+    failed_login_attempts = db.relationship('FailedLoginAttempt', backref='user', lazy=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+# Código relacionado con la implementación de OWASP A1 aquí...
+            </code></pre>
+        </div>
+<div class="owasp-block">
+            <h2 class="owasp-title">A2: Autenticación Rota</h2>
+            <p>
+                La autenticación es segura y no se encuentra rota. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+        <!-- Bloque de Implementación de OWASP: A3 - Exposición de Datos Sensibles -->
+        <div class="owasp-block">
+            <h2 class="owasp-title">A3: Exposición de Datos Sensibles</h2>
+            <p class="owasp-desc">Se protegen adecuadamente los datos sensibles.</p>
+            <p class="owasp-desc"><i class="owasp-check fas fa-check-circle"></i> Implementación segura.</p>
+            <pre><code>
+# Implementación de OWASP A3 - Exposición de Datos Sensibles
+from werkzeug.security import generate_password_hash, check_password_hash
+
+# Definición del modelo User en SQLAlchemy
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    password_hash = db.Column(db.String(100), nullable=False)
+    # Otros campos...
+
+    # Métodos para establecer y verificar contraseñas
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+# Código relacionado con la implementación de OWASP A3 aquí...
+            </code></pre>
+        </div>
+        <div class="owasp-block">
+            <h2 class="owasp-title">A4: XML External Entities (XXE)</h2>
+            <p>
+                No se permiten entidades XML externas. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+
+         <div class="owasp-block">
+            <h2 class="owasp-title">A5: Control de Acceso Roto</h2>
+            <p>
+                Se implementa un control de acceso adecuado. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+
+         <div class="owasp-block">
+            <h2 class="owasp-title">A6: Configuración de Seguridad Deficiente</h2>
+            <p>
+                La configuración de seguridad es adecuada. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+
+        <!-- Bloque de Implementación de OWASP: A7 - Cross-Site Scripting (XSS) -->
+        <div class="owasp-block">
+            <h2 class="owasp-title">A7: Cross-Site Scripting (XSS)</h2>
+            <p class="owasp-desc">No se permite la ejecución de scripts no autorizados en el navegador.</p>
+            <p class="owasp-desc"><i class="owasp-check fas fa-check-circle"></i> Implementación segura.</p>
+            <pre><code>
+# Implementación de OWASP A7 - Cross-Site Scripting (XSS)
+import html
+
+# Código Python relacionado con la limpieza de entrada HTML
+username = "<script>alert('XSS Attack!');</script>"
+clean_username = html.escape(username)
+print(clean_username)  # Salida: &lt;script&gt;alert('XSS Attack!');&lt;/script&gt;
+
+# Código relacionado con la implementación de OWASP A7 aquí...
+            </code></pre>
+        </div>
+        <div class="owasp-block">
+            <h2 class="owasp-title">A8: Deserialización No Segura</h2>
+            <p>
+                La deserialización se realiza de forma segura. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+
+        <div class="owasp-block">
+            <h2 class="owasp-title">A9: Utilización de Componentes con Vulnerabilidades Conocidas</h2>
+            <p>
+                Se monitorean y actualizan los componentes con vulnerabilidades conocidas. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+
+        <div class="owasp-block">
+            <h2 class="owasp-title">A10: Logging y Monitoreo Insuficientes</h2>
+            <p>
+                Se implementa un sistema de logging y monitoreo adecuado. <i class="owasp-check text-success fas fa-check-circle"></i>
+            </p>
+        </div>
+
+
+        <!-- Botón para ir al Dashboard -->
+        <a href="/admin/dashboard" class="btn btn-primary">Ir al Dashboard</a>
+
+        <!-- Botón de Logout -->
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
+
+     <!-- Footer -->
+    <footer class="text-center mt-5">
+        Desarrollado por Joao Navarro &copy; <i class="fas fa-registered"></i>
+    </footer>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+</html>
